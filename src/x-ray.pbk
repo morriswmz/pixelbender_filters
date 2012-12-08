@@ -1,0 +1,31 @@
+<languageVersion : 1.0;>
+
+kernel xray
+<   namespace : "morriswmz";
+    vendor : "morriswmz";
+    version : 1;
+>
+
+
+
+{
+    input image4 src;
+    output pixel4 dst;
+    
+    parameter float3 rgb
+<
+    minValue: float3(0.0,0.0,0.0);
+    maxValue: float3(1.0,1.0,1.0);
+    defaultValue : float3(0.0,0.0,1.0);
+>;
+
+    void
+    evaluatePixel()
+    {
+        float4 tone = float4(0.77, 0.89, 1.0, 1.0);
+        float4 point = sampleNearest(src,outCoord());
+        float l = (point.r + point.g + point.b)/3.0;
+        l = 1.0-l*l;
+        dst = tone * l;
+    }
+}

@@ -1,0 +1,36 @@
+<languageVersion : 1.0;>
+
+kernel edge
+<   namespace : "wmz";
+    vendor : "morriswmz";
+    version : 1;
+>
+{
+    input image4 src;
+    output pixel4 dst;
+
+    void
+    evaluatePixel()
+    {
+        float2 pos = outCoord();
+        
+        float4 p00 = sampleNearest(src, pos + float2(-1.0, -1.0));
+        float4 p01 = sampleNearest(src, pos + float2( 0.0, -1.0));
+        float4 p02 = sampleNearest(src, pos + float2( 1.0, -1.0));
+        float4 p10 = sampleNearest(src, pos + float2(-1.0,  0.0));
+        float4 p11 = sampleNearest(src, pos + float2( 0.0,  0.0));
+        float4 p12 = sampleNearest(src, pos + float2( 1.0,  0.0));
+        float4 p20 = sampleNearest(src, pos + float2(-1.0,  1.0));
+        float4 p21 = sampleNearest(src, pos + float2( 0.0,  1.0));
+        float4 p22 = sampleNearest(src, pos + float2( 1.0,  1.0));
+
+        
+        float4 gx = p02 + p22 - p00 - p20 + 2.0 * (p12 - p10);
+        float4 gy = p20 + p22 - p00 - p02 + 2.0 * (p21 - p01);
+        float gxl = length(gx);
+        float gyl = length(gy);
+        float g = sqrt(gxl*gxl+gyl*gyl);
+        g = float(int(g * 2.0))*0.5;
+        dst = float4(g,g,g,1.0);
+    }
+}

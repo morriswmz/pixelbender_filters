@@ -1,0 +1,33 @@
+<languageVersion : 1.0;>
+
+kernel Retro8Bit
+<   namespace : "wmz";
+    vendor : "morriswmz";
+    version : 1;
+>
+{
+    input image4 src;
+    output pixel4 dst;
+    
+    parameter int dotSize
+    <
+        defaultValue : 2;
+        minValue : 1;
+        maxValue : 10;
+    >;
+   
+
+    void
+    evaluatePixel()
+    {
+        float2 curPos = outCoord();
+        int2 intPos = int2(curPos.x, curPos.y);
+        intPos /= dotSize;
+        intPos *= dotSize;
+        float4 curPoint = sampleNearest(src, float2(intPos.x, intPos.y));
+        float nr = float(int(curPoint.r * 8.0))/8.0;
+        float ng = float(int(curPoint.g * 8.0))/8.0;
+        float nb = float(int(curPoint.b * 8.0))/8.0;
+        dst = float4(nr, ng, nb, curPoint.a);
+    }
+}

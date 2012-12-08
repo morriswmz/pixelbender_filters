@@ -1,0 +1,30 @@
+<languageVersion : 1.0;>
+
+kernel Heatmap
+<   namespace : "wmz";
+    vendor : "morriswmz";
+    version : 1;
+>
+{
+    input image4 src;
+    output pixel4 dst;
+
+    void
+    evaluatePixel()
+    {
+        float4 cp = sampleNearest(src,outCoord());
+        float l = 0.2126*cp.r+0.7152*cp.g+0.0722*cp.b;
+        float r,g,b;
+        if (l > 0.5) {
+            r = (l-0.5)*2.0;
+            g = (1.0-l)*2.0;
+            b = 0.0;
+        } else {
+            r = 0.0;
+            g = l*2.0;
+            b = (0.5-l)*2.0;
+        }
+        
+        dst = float4(r,g,b,cp.a);
+    }
+}

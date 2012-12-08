@@ -1,0 +1,34 @@
+<languageVersion : 1.0;>
+
+kernel Discrepency
+<   namespace : "wmz";
+    vendor : "morriswmz";
+    version : 1;
+>
+{
+    input image4 src;
+    output pixel4 dst;
+    
+    parameter float3 displacement
+    <
+        minValue : float3(-50.0, -50.0, -50.0);
+        maxValue : float3(50.0, 50.0, 50.0);
+        defaultValue : float3(-20.0, -17.0, 4.0);
+    >;
+    
+    void
+    evaluatePixel()
+    {
+        float2 pos = outCoord();
+        float4 cur = sampleNearest(src, pos);
+        float4 pr = sampleNearest(src, pos - float2(displacement.r, 0.0));
+        float4 pg = sampleNearest(src, pos - float2(displacement.g, 0.0));
+        float4 pb = sampleNearest(src, pos - float2(displacement.b, 0.0));
+        
+        float nr = (cur.r + pr.r)*0.5;
+        float ng = (cur.g + pg.g)*0.5;
+        float nb = (cur.b + pb.b)*0.5;
+        
+        dst = float4(nr, ng, nb, cur.a);
+    }
+}
